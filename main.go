@@ -21,5 +21,12 @@ func main() {
 	if argsLength == 1 {
 		baseURL := argsWithProg[0]
 		fmt.Println("starting crawl of: ", baseURL)
+		result, err := getHTML(baseURL)
+		if err != nil {
+			fmt.Println("We got an err: ", err)
+		}
+		fmt.Println("Success! We got a result: ", result)
 	}
+	fmt.Println("Execution complete")
+	
 }
