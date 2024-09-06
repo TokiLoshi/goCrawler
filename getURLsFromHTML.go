@@ -33,13 +33,14 @@ func getURLsFromHTML(htmlBody, rawBaseURL string) ([]string, error) {
 	// create a tree of html nodes
 	
 	// recursively traverse the treee node and append the anchor tags
-	var f func(*html.Node) 
-	f = func(n *html.Node) {
-		if n.Type == html.ElementNode && n.Data == "a" {
-			for _, a := range n.Attr {
-				if a.Key == "href" {
-					parsedURL, err := url.Parse(a.Val)
+	var traverseNode func(*html.Node) 
+	traverseNode = func(node *html.Node) {
+		if node.Type == html.ElementNode && node.Data == "a" {
+			for _, anchor := range node.Attr {
+				if anchor.Key == "href" {
+					parsedURL, err := url.Parse(anchor.Val)
 					if err != nil {
+						fmt.Printf("in getURLsFromHTML '%v': %v\n", anchor.Val, err)
 						continue
 					}
 					fullURL := baseURL.ResolveReference(parsedURL).String()
@@ -47,11 +48,11 @@ func getURLsFromHTML(htmlBody, rawBaseURL string) ([]string, error) {
 				}
 			}
 		}
-		for c:= n.FirstChild; c != nil; c = c.NextSibling {
-			f(c)
+		for child := node.FirstChild; child != nil; child = child.NextSibling {
+			traverseNode(child)
 		}
 	}
-	f(doc)
+	traverseNode(doc)
 
 	if len(urls) == 0 {
 		return urls, fmt.Errorf("invalid HTML %v", err)

@@ -40,16 +40,6 @@ func getHTML(rawURL string) (string, error) {
 		return "", fmt.Errorf("something went wrong returning page contents %v", err)
 	}
 	bodyString := string(bodyBytes)
-	fmt.Printf("Reader returns: %s", bodyString)
 
-	fmt.Println("Body: ", bodyString)
 	return bodyString, nil
-
-	
-	
-	// return any other possible errors
-	// return webpage's html if all goes well
-	// use io.ReadAll to read the response 
-	// call getHTML from main 
-	// print the result (some html from the internet)
 }

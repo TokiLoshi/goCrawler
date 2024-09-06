@@ -7,26 +7,27 @@ import (
 
 func main() {
 	// Takes a command line argument (URL) e.g go run . BASE_URL (root URL)
-	argsWithProg := os.Args[1:]
 
-	argsLength := len(os.Args[1:])
-	if argsLength < 1 {
+	if len(os.Args) < 2 {
 		fmt.Println("no website provided")
 		os.Exit(1)
 	}
-	if argsLength > 1 {
+	if len(os.Args) > 2 {
 		fmt.Println("too many arguments provided")
 		os.Exit(1)
 	}
-	if argsLength == 1 {
-		baseURL := argsWithProg[0]
-		fmt.Println("starting crawl of: ", baseURL)
-		result, err := getHTML(baseURL)
-		if err != nil {
-			fmt.Println("We got an err: ", err)
-		}
-		fmt.Println("Success! We got a result: ", result)
+
+	rawBaseURL := os.Args[1]
+	fmt.Printf("starting crawl of: %s...\n", rawBaseURL)
+
+	pages := make(map[string]int)
+	crawlPage(rawBaseURL, rawBaseURL, pages)
+	fmt.Println("Done with pages now time to print them!")
+	
+	for normalizedURL, count := range pages {
+		fmt.Printf("Page %d - item: %v", count, normalizedURL)
 	}
+
 	fmt.Println("Execution complete")
 	
 }
