@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/url"
 	"reflect"
 	"strings"
 	"testing"
@@ -89,7 +90,12 @@ expected: []string{"http://blog.golang.com/absolute-gopher"},
 	}
 	for i, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			actual, err := getURLsFromHTML(tc.htmlBody, tc.rawBaseURL)
+			baseURL, err := url.Parse(tc.rawBaseURL)
+			if err != nil {
+				t.Errorf("Test %v - '%s' FAIL: couldn't parse input URL: %v", i, tc.name, err)
+				return
+			}
+			actual, err := getURLsFromHTML(tc.rawBaseURL, baseURL)
 			if err != nil && !strings.Contains(err.Error(), tc.errorContains) {
 				t.Errorf("Test %v - '%s' FAIL: unexpected error: %v", i, tc.name, err)
 				return

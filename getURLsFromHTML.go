@@ -9,29 +9,18 @@ import (
 )
 
 
-func getURLsFromHTML(htmlBody, rawBaseURL string) ([]string, error) {
+func getURLsFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
 	
-	urls := []string{}
+	
 
-	if len(rawBaseURL) == 0 {
-		return urls, fmt.Errorf("empty base URL")
-	}
-	
-	// Parse the base url 
-	baseURL, err := url.Parse(rawBaseURL)
-	if err != nil { 
-		return urls, fmt.Errorf("error parsing URL: %v", err)
-	}
-	
 	// Parse the HTML 
 	doc, err := html.Parse(strings.NewReader(htmlBody))
 	if err != nil {
-		return urls, fmt.Errorf("invalid HTML: %v", err)
+		return nil, fmt.Errorf("invalid HTML: %v", err)
 	}
-
 	
 	// create a tree of html nodes
-	
+	urls := []string{}
 	// recursively traverse the treee node and append the anchor tags
 	var traverseNode func(*html.Node) 
 	traverseNode = func(node *html.Node) {

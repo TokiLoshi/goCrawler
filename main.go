@@ -5,6 +5,8 @@ import (
 	"os"
 )
 
+
+
 func main() {
 	// Takes a command line argument (URL) e.g go run . BASE_URL (root URL)
 
@@ -18,13 +20,22 @@ func main() {
 	}
 
 	rawBaseURL := os.Args[1]
-	fmt.Printf("starting crawl of: %s...\n", rawBaseURL)
+	
+	const maxConcurrency = 3
+	cfg, err := configure(rawBaseURL, maxConcurrency)
+	if err != nil {
+		fmt.Printf("Error - configure: %v", err)
+	}
 
-	pages := make(map[string]int)
-	crawlPage(rawBaseURL, rawBaseURL, pages)
+	fmt.Printf("starting crawl of: %s...\n", rawBaseURL)
+	
+	cfg.wg.Add(1)
+	go cfg.crawlPage(rawBaseURL)
+	cfg.wg.Wait()
+
 	fmt.Println("Done with pages now time to print them!")
 	
-	for normalizedURL, count := range pages {
+	for normalizedURL, count := range cfg.pages {
 		fmt.Printf("Page %d - item: %v", count, normalizedURL)
 	}
 
