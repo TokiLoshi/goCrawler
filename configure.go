@@ -24,6 +24,7 @@ type config struct {
 	// Ensure main waits until all in-flight goroutines (HTTP requests) are done
 	// Then exit 
 	wg *sync.WaitGroup
+	maxPages int
 }
 
 
@@ -33,6 +34,11 @@ func (cfg *config) addPageVisit(normalizedURL string) (isFirst bool) {
 	cfg.mu.Lock()
 	// defer the unlock 
 	defer cfg.mu.Unlock()
+
+	if len(cfg.pages) >= cfg.maxPages {
+		return false
+	}
+
 	if _, visited := cfg.pages[normalizedURL]; visited {
 		cfg.pages[normalizedURL]++
 		return false
@@ -41,7 +47,7 @@ func (cfg *config) addPageVisit(normalizedURL string) (isFirst bool) {
 	return true
 }
 
-func configure(rawBaseURL string, maxConcurrency int) (*config, error) {
+func configure(rawBaseURL string, maxConcurrency int, maxPages int) (*config, error) {
 	baseURL, err := url.Parse(rawBaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't parse base URL: %v", err)
@@ -52,5 +58,6 @@ func configure(rawBaseURL string, maxConcurrency int) (*config, error) {
 		mu: &sync.Mutex{},
 		concurrencyControl: make(chan struct{}, maxConcurrency), 
 		wg: &sync.WaitGroup{},
+		maxPages: maxPages,
 	}, nil
 }

@@ -5,14 +5,19 @@ import (
 	"net/url"
 )
 
+
+
 func (cfg *config) crawlPage(rawCurrentURL string) {
+	// Check to see if we've maxed out pages
 	// Initialize the concurrency control
 	cfg.concurrencyControl <- struct{}{}
 	defer func() {
 		<-cfg.concurrencyControl
 		cfg.wg.Done()
 	}()
+	
 
+	
 	// Check rawCurrentURL is on same domain as rawBaseURL
 	parsedBaseURL := cfg.baseURL
 	parsedCurrent, err := url.Parse(rawCurrentURL)
@@ -36,11 +41,8 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 		fmt.Printf("issue normalizing rawCurrentURL: %v", err)
 		return 
 	}
-	
-	
-	// Handle Base case
-	isFirst := cfg.addPageVisit(normalizedCurrent)
-	if !isFirst {
+
+	if !cfg.addPageVisit(normalizedCurrent) {
 		return
 	}
 
@@ -67,6 +69,12 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 	
 	// Recursively crawl each url on the page 
 	for _, webURL := range allURLs {
+		cfg.mu.Lock()
+		if len(cfg.pages) >= cfg.maxPages {
+			cfg.mu.Unlock()
+			return
+		}
+		cfg.mu.Unlock()
 		cfg.wg.Add(1)
 		go cfg.crawlPage(webURL)
 	}
