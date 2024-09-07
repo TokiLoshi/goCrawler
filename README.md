@@ -12,4 +12,4 @@ Choose the website you would like to crawl in quotes, followed by the max concur
 
 Run the report and you should see something like this:
 
-![alt text](report.png)
+![alt text](https://github.com/TokiLoshi/goCrawler/blob/main/report.png)
