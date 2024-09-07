@@ -4,17 +4,17 @@ import (
 	"sort"
 )
 
-type page struct {
+type Page struct {
 	links int
 	url string
 }
 
-func sortPages(pages map[string]int) []page {
+func sortPages(pages map[string]int) []Page {
 
 	// sort the pages 
-	var sortedPages []page
+	var sortedPages []Page
 	for url, links := range pages {
-		sortedPages = append(sortedPages, page{url: url, links: links})
+		sortedPages = append(sortedPages, Page{url: url, links: links})
 	}
 
 	sort.Slice(sortedPages, func(i, j int) bool {
