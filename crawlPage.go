@@ -6,7 +6,6 @@ import (
 )
 
 
-
 func (cfg *config) crawlPage(rawCurrentURL string) {
 	// Check to see if we've maxed out pages
 	// Initialize the concurrency control
@@ -15,8 +14,6 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 		<-cfg.concurrencyControl
 		cfg.wg.Done()
 	}()
-	
-
 	
 	// Check rawCurrentURL is on same domain as rawBaseURL
 	parsedBaseURL := cfg.baseURL
@@ -47,25 +44,24 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 	}
 
 	// Get HTML from current URL and add print statement to watch crawler 
-	fmt.Printf("On Crawler: crawling: %s\n", rawCurrentURL)
+	fmt.Printf("crawling: %s\n", rawCurrentURL)
 
 	
 	currentHTML, err := getHTML(rawCurrentURL)
 	if err != nil {
-		fmt.Printf("issue getting html: %v", err)
+		fmt.Printf("issue getting html: %v\n", err)
 		return 
 	}
 
 	// Get URLS
 	allURLs, err := getURLsFromHTML(currentHTML, cfg.baseURL)
 	if err != nil {
-		fmt.Printf("Issue getting all the urls: %v", err)
+		fmt.Printf("Issue getting all the urls: %v\n", err)
 	}
-	fmt.Println("I think we got all the URLS!")
 	
-	for i := 0; i < len(allURLs); i ++ {
-		fmt.Println(allURLs[i])
-	}
+	// for i := 0; i < len(allURLs); i ++ {
+	// 	fmt.Println(allURLs[i])
+	// }
 	
 	// Recursively crawl each url on the page 
 	for _, webURL := range allURLs {

@@ -27,8 +27,7 @@ func main() {
 		os.Exit(1)
 	}
 	maxPages, err := strconv.Atoi(os.Args[3])
-	fmt.Printf("Max concurrency: %v", maxConcurrency)
-	fmt.Printf("Max pages: %v", maxPages)
+
 	if err != nil {
 		fmt.Println("incorrect max pages")
 		os.Exit(1)
@@ -44,13 +43,13 @@ func main() {
 	cfg.wg.Add(1)
 	go cfg.crawlPage(rawBaseURL)
 	cfg.wg.Wait()
-
-	fmt.Println("Done with pages now time to print them!")
 	
-	for normalizedURL, count := range cfg.pages {
-		fmt.Printf("Page %d - item: %v", count, normalizedURL)
-	}
+	// for normalizedURL, count := range cfg.pages {
+	// 	fmt.Printf("Page %d - item: %v", count, normalizedURL)
+	// }
 
-	fmt.Println("Execution complete")
+	printReport(cfg.pages, rawBaseURL)
+
+	fmt.Printf("Execution complete\n")
 	
 }

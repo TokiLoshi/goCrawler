@@ -17,7 +17,6 @@ func getHTML(rawURL string) (string, error) {
 	}
 	defer res.Body.Close()
 	statusCode := res.StatusCode
-	fmt.Println("StatusCode: ", statusCode)
 
 	// If HTTP status code is 400+ return err
 	if statusCode >= 400 {
